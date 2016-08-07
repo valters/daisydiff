@@ -27,25 +27,26 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class TagSaxDiffOutput implements TextDiffOutput{
 
-    private ContentHandler consumer;
+    private final ContentHandler consumer;
 
-    public TagSaxDiffOutput(ContentHandler consumer) throws SAXException {
+    public TagSaxDiffOutput(final ContentHandler consumer) {
         this.consumer = consumer;
     }
 
     /**
      * {@inheritDoc}
      */
-    public void addClearPart(String text) throws Exception {
+    @Override
+    public void addClearPart(final String text) throws Exception {
         addBasicText(text);
     }
 
     private boolean insideTag = false;
 
-    private void addBasicText(String text) throws SAXException {
-        char[] c = text.toCharArray();
+    private void addBasicText(final String text) throws SAXException {
+        final char[] c = text.toCharArray();
 
-        AttributesImpl noattrs = new AttributesImpl();
+        final AttributesImpl noattrs = new AttributesImpl();
 
         for (int i = 0; i < c.length; i++) {
             switch (c[i]) {
@@ -56,7 +57,7 @@ public class TagSaxDiffOutput implements TextDiffOutput{
                 break;
             case '<':
                 if (insideTag == false) {
-                    AttributesImpl attrs = new AttributesImpl();
+                    final AttributesImpl attrs = new AttributesImpl();
                     attrs.addAttribute("", "class", "class", "CDATA",
                             "diff-tag-html");
                     consumer.startElement("", "span", "span", attrs);
@@ -88,8 +89,9 @@ public class TagSaxDiffOutput implements TextDiffOutput{
     /**
      * {@inheritDoc}
      */
-    public void addRemovedPart(String text) throws Exception {
-        AttributesImpl attrs = new AttributesImpl();
+    @Override
+    public void addRemovedPart(final String text) throws Exception {
+        final AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-removed");
         attrs.addAttribute("", "id", "id", "CDATA", "removed" + removedID);
         attrs.addAttribute("", "title", "title", "CDATA", "#removed"
@@ -103,8 +105,9 @@ public class TagSaxDiffOutput implements TextDiffOutput{
     /**
      * {@inheritDoc}
      */
-    public void addAddedPart(String text) throws Exception {
-        AttributesImpl attrs = new AttributesImpl();
+    @Override
+    public void addAddedPart(final String text) throws Exception {
+        final AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-added");
         attrs.addAttribute("", "id", "id", "CDATA", "added" + addedID);
         attrs.addAttribute("", "title", "title", "CDATA", "#added" + addedID);
