@@ -37,27 +37,27 @@ public class DaisyDiff {
     /**
      * Diffs two html files, outputting the result to the specified consumer.
      */
-    public static void diffHTML(InputSource oldSource, InputSource newSource,
-            ContentHandler consumer, String prefix, Locale locale)
+    public static void diffHTML(final InputSource oldSource, final InputSource newSource,
+            final ContentHandler consumer, final String prefix, final Locale locale)
             throws SAXException, IOException {
 
-        DomTreeBuilder oldHandler = new DomTreeBuilder();
-        XMLReader xr1 = XMLReaderFactory.createXMLReader();
+        final DomTreeBuilder oldHandler = new DomTreeBuilder();
+        final XMLReader xr1 = XMLReaderFactory.createXMLReader();
         xr1.setContentHandler(oldHandler);
         xr1.parse(oldSource);
-        TextNodeComparator leftComparator = new TextNodeComparator(oldHandler,
+        final TextNodeComparator leftComparator = new TextNodeComparator(oldHandler,
                 locale);
 
-        DomTreeBuilder newHandler = new DomTreeBuilder();
-        XMLReader xr2 = XMLReaderFactory.createXMLReader();
+        final DomTreeBuilder newHandler = new DomTreeBuilder();
+        final XMLReader xr2 = XMLReaderFactory.createXMLReader();
         xr2.setContentHandler(newHandler);
         xr2.parse(newSource);
 
-        TextNodeComparator rightComparator = new TextNodeComparator(newHandler,
+        final TextNodeComparator rightComparator = new TextNodeComparator(newHandler,
                 locale);
 
-        HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(consumer, prefix);
-        HTMLDiffer differ = new HTMLDiffer(output);
+        final HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(consumer, prefix);
+        final HTMLDiffer differ = new HTMLDiffer(output);
         differ.diff(leftComparator, rightComparator);
     }
 
@@ -65,30 +65,30 @@ public class DaisyDiff {
      * Diffs two html files word for word as source, outputting the result to
      * the specified consumer.
      */
-    public static void diffTag(String oldText, String newText,
-            ContentHandler consumer) throws Exception {
-        consumer.startDocument();
-        TagComparator oldComp = new TagComparator(oldText);
-        TagComparator newComp = new TagComparator(newText);
+    public static void diffTag(final String oldText, final String newText,
+            final ContentHandler consumer) throws Exception {
 
-        TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
-        TagDiffer differ = new TagDiffer(output);
+        final TagComparator oldComp = new TagComparator(oldText);
+        final TagComparator newComp = new TagComparator(newText);
+
+        final TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
+        final TagDiffer differ = new TagDiffer(output);
         differ.diff(oldComp, newComp);
-        consumer.endDocument();
+
     }
 
     /**
      * Diffs two html files word for word as source, outputting the result to
      * the specified consumer.
      */
-    public static void diffTag(BufferedReader oldText, BufferedReader newText,
-            ContentHandler consumer) throws Exception {
+    public static void diffTag(final BufferedReader oldText, final BufferedReader newText,
+            final ContentHandler consumer) throws Exception {
 
-        TagComparator oldComp = new TagComparator(oldText);
-        TagComparator newComp = new TagComparator(newText);
+        final TagComparator oldComp = new TagComparator(oldText);
+        final TagComparator newComp = new TagComparator(newText);
 
-        TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
-        TagDiffer differ = new TagDiffer(output);
+        final TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
+        final TagDiffer differ = new TagDiffer(output);
         differ.diff(oldComp, newComp);
     }
 
