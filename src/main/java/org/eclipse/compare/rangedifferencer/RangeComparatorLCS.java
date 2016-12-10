@@ -13,12 +13,8 @@ package org.eclipse.compare.rangedifferencer;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.LCS;
 import org.eclipse.compare.internal.LCSSettings;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubMonitor;
 
 /* package */class RangeComparatorLCS extends LCS {
 
@@ -26,22 +22,18 @@ import org.eclipse.core.runtime.SubMonitor;
 
     private int[][] lcs;
 
-    public static RangeDifference[] findDifferences(IProgressMonitor pm,
-            LCSSettings settings, IRangeComparator left, IRangeComparator right) {
-        RangeComparatorLCS lcs = new RangeComparatorLCS(left, right);
-        SubMonitor monitor = SubMonitor.convert(pm,
-                CompareMessages.RangeComparatorLCS_0, 100);
+    public static RangeDifference[] findDifferences(final LCSSettings settings, final IRangeComparator left, final IRangeComparator right) {
+        final RangeComparatorLCS lcs = new RangeComparatorLCS(left, right);
+
         try {
-            lcs.longestCommonSubsequence(monitor.newChild(95), settings);
-            return lcs.getDifferences(monitor.newChild(5));
+            lcs.longestCommonSubsequence(settings);
+            return lcs.getDifferences();
         } finally {
-            if (pm != null)
-                pm.done();
         }
     }
 
-    public RangeComparatorLCS(IRangeComparator comparator1,
-            IRangeComparator comparator2) {
+    public RangeComparatorLCS(final IRangeComparator comparator1,
+            final IRangeComparator comparator2) {
         this.comparator1 = comparator1;
         this.comparator2 = comparator2;
     }
@@ -57,32 +49,31 @@ import org.eclipse.core.runtime.SubMonitor;
     }
 
     @Override
-    protected void initializeLcs(int lcsLength) {
+    protected void initializeLcs(final int lcsLength) {
         lcs = new int[2][lcsLength];
     }
 
     @Override
-    protected boolean isRangeEqual(int i1, int i2) {
+    protected boolean isRangeEqual(final int i1, final int i2) {
         return comparator1.rangesEqual(i1, comparator2, i2);
     }
 
     @Override
-    protected void setLcs(int sl1, int sl2) {
+    protected void setLcs(final int sl1, final int sl2) {
         // Add one to the values so that 0 can mean that the slot is empty
         lcs[0][sl1] = sl1 + 1;
         lcs[1][sl1] = sl2 + 1;
     }
 
-    public RangeDifference[] getDifferences(SubMonitor subMonitor) {
+    public RangeDifference[] getDifferences() {
         try {
-            List differences = new ArrayList();
-            int length = getLength();
+            final List differences = new ArrayList();
+            final int length = getLength();
             if (length == 0) {
                 differences.add(new RangeDifference(RangeDifference.CHANGE, 0,
                         comparator2.getRangeCount(), 0, comparator1
                                 .getRangeCount()));
             } else {
-                subMonitor.beginTask(null, length);
                 int index1, index2;
                 index1 = index2 = 0;
                 int l1, l2;
@@ -92,22 +83,26 @@ import org.eclipse.core.runtime.SubMonitor;
                     // Move both LCS lists to the next occupied slot
                     while ((l1 = lcs[0][index1]) == 0) {
                         index1++;
-                        if (index1 >= lcs[0].length)
+                        if (index1 >= lcs[0].length) {
                             break;
+                        }
                     }
-                    if (index1 >= lcs[0].length)
+                    if (index1 >= lcs[0].length) {
                         break;
+                    }
                     while ((l2 = lcs[1][index2]) == 0) {
                         index2++;
-                        if (index2 >= lcs[1].length)
+                        if (index2 >= lcs[1].length) {
                             break;
+                        }
                     }
-                    if (index2 >= lcs[1].length)
+                    if (index2 >= lcs[1].length) {
                         break;
+                    }
                     // Convert the entry to an array index (see setLcs(int,
                     // int))
-                    int end1 = l1 - 1;
-                    int end2 = l2 - 1;
+                    final int end1 = l1 - 1;
+                    final int end2 = l2 - 1;
                     if (s1 == -1 && (end1 != 0 || end2 != 0)) {
                         // There is a diff at the beginning
                         // TODO: We need to conform that this is the proper
@@ -116,10 +111,10 @@ import org.eclipse.core.runtime.SubMonitor;
                                 RangeDifference.CHANGE, 0, end2, 0, end1));
                     } else if (end1 != s1 + 1 || end2 != s2 + 1) {
                         // A diff was found on one of the sides
-                        int leftStart = s1 + 1;
-                        int leftLength = end1 - leftStart;
-                        int rightStart = s2 + 1;
-                        int rightLength = end2 - rightStart;
+                        final int leftStart = s1 + 1;
+                        final int leftLength = end1 - leftStart;
+                        final int rightStart = s2 + 1;
+                        final int rightLength = end2 - rightStart;
                         // TODO: We need to conform that this is the proper
                         // order
                         differences.add(new RangeDifference(
@@ -130,16 +125,15 @@ import org.eclipse.core.runtime.SubMonitor;
                     s2 = end2;
                     index1++;
                     index2++;
-                    worked(subMonitor, 1);
                 }
                 if (s1 != -1
                         && (s1 + 1 < comparator1.getRangeCount() || s2 + 1 < comparator2
                                 .getRangeCount())) {
                     // TODO: we need to find the proper way of representing an
                     // append
-                    int leftStart = s1 < comparator1.getRangeCount() ? s1 + 1
+                    final int leftStart = s1 < comparator1.getRangeCount() ? s1 + 1
                             : s1;
-                    int rightStart = s2 < comparator2.getRangeCount() ? s2 + 1
+                    final int rightStart = s2 < comparator2.getRangeCount() ? s2 + 1
                             : s2;
                     // TODO: We need to conform that this is the proper order
                     differences.add(new RangeDifference(RangeDifference.CHANGE,
@@ -151,14 +145,7 @@ import org.eclipse.core.runtime.SubMonitor;
             return (RangeDifference[]) differences
                     .toArray(new RangeDifference[differences.size()]);
         } finally {
-            subMonitor.done();
         }
-    }
-
-    private void worked(SubMonitor subMonitor, int work) {
-        if (subMonitor.isCanceled())
-            throw new OperationCanceledException();
-        subMonitor.worked(work);
     }
 
 }
