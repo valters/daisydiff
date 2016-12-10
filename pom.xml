@@ -5,7 +5,7 @@
 
   <groupId>io.github.valters</groupId>
   <artifactId>daisydiff</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <name>DaisyDiff</name>
   <description>
     A Java library to compare text files.
@@ -82,6 +82,9 @@
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
+          <compilerArgs>
+              <arg>-Xlint:unchecked</arg>
+          </compilerArgs>
         </configuration>
       </plugin>
       <plugin>
@@ -127,7 +130,7 @@
   </build>
 
   <scm>
-    <connection>scm:git:git://github.com/valters/daisydiff.git</connection>
+    <connection>scm:git:https://github.com/valters/daisydiff.git</connection>
     <developerConnection>scm:git:ssh://git@github.com:valters/daisydiff.git</developerConnection>
     <url>https://github.com/valters/daisydiff</url>
   </scm>
