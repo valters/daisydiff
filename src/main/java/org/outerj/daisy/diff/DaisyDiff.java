@@ -16,50 +16,13 @@
 package org.outerj.daisy.diff;
 
 import java.io.BufferedReader;
-import java.io.IOException;
-import java.util.Locale;
 
-import org.outerj.daisy.diff.html.HTMLDiffer;
-import org.outerj.daisy.diff.html.HtmlSaxDiffOutput;
-import org.outerj.daisy.diff.html.TextNodeComparator;
-import org.outerj.daisy.diff.html.dom.DomTreeBuilder;
 import org.outerj.daisy.diff.tag.TagComparator;
 import org.outerj.daisy.diff.tag.TagDiffer;
 import org.outerj.daisy.diff.tag.TagSaxDiffOutput;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
 
 public class DaisyDiff {
-
-    /**
-     * Diffs two html files, outputting the result to the specified consumer.
-     */
-    public static void diffHTML(final InputSource oldSource, final InputSource newSource,
-            final ContentHandler consumer, final String prefix, final Locale locale)
-            throws SAXException, IOException {
-
-        final DomTreeBuilder oldHandler = new DomTreeBuilder();
-        final XMLReader xr1 = XMLReaderFactory.createXMLReader();
-        xr1.setContentHandler(oldHandler);
-        xr1.parse(oldSource);
-        final TextNodeComparator leftComparator = new TextNodeComparator(oldHandler,
-                locale);
-
-        final DomTreeBuilder newHandler = new DomTreeBuilder();
-        final XMLReader xr2 = XMLReaderFactory.createXMLReader();
-        xr2.setContentHandler(newHandler);
-        xr2.parse(newSource);
-
-        final TextNodeComparator rightComparator = new TextNodeComparator(newHandler,
-                locale);
-
-        final HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(consumer, prefix);
-        final HTMLDiffer differ = new HTMLDiffer(output);
-        differ.diff(leftComparator, rightComparator);
-    }
 
     /**
      * Diffs two html files word for word as source, outputting the result to
@@ -71,9 +34,7 @@ public class DaisyDiff {
         final TagComparator oldComp = new TagComparator(oldText);
         final TagComparator newComp = new TagComparator(newText);
 
-        final TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
-        final TagDiffer differ = new TagDiffer(output);
-        differ.diff(oldComp, newComp);
+        diffTag( consumer, oldComp, newComp );
 
     }
 
@@ -87,6 +48,10 @@ public class DaisyDiff {
         final TagComparator oldComp = new TagComparator(oldText);
         final TagComparator newComp = new TagComparator(newText);
 
+        diffTag( consumer, oldComp, newComp );
+    }
+
+    private static void diffTag( final ContentHandler consumer, final TagComparator oldComp, final TagComparator newComp ) throws Exception {
         final TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
         final TagDiffer differ = new TagDiffer(output);
         differ.diff(oldComp, newComp);

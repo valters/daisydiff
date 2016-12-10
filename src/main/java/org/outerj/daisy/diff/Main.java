@@ -8,29 +8,24 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Locale;
 
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.outerj.daisy.diff.html.HTMLDiffer;
-import org.outerj.daisy.diff.html.HtmlSaxDiffOutput;
-import org.outerj.daisy.diff.html.TextNodeComparator;
-import org.outerj.daisy.diff.html.dom.DomTreeBuilder;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class Main {
   static boolean quietMode = false;
 
-    public static void main(String[] args) throws URISyntaxException {
+    public static void main(final String[] args) throws URISyntaxException {
 
-        if (args.length < 2)
+        if (args.length < 2) {
             help();
+        }
 
         boolean htmlDiff = true;
         boolean htmlOut = true;
@@ -42,7 +37,7 @@ public class Main {
 
         try {
             for (int i = 2; i < args.length; i++) {
-                String[] split = args[i].split("=");
+                final String[] split = args[i].split("=");
                 if (split[0].equalsIgnoreCase("--file")) {
                     outputFileName = split[1];
                 } else if (split[0].equalsIgnoreCase("--type")) {
@@ -62,11 +57,11 @@ public class Main {
                 }
 
             }
-            File outputFile= new File(outputFileName);
+            final File outputFile= new File(outputFileName);
             try {
                 outputFile.createNewFile(); // Fail if outputFileName is malformed. Otherwise result.setResult() below would silently supress an exception (at least with jdk1.8.0_65). Then calling postProcess.endDocument() below would fail with confusing "javax.xml.transform.TransformerException: org.xml.sax.SAXException: setResult() must be called prior to startDocument()."
             }
-            catch( IOException e ) {
+            catch( final IOException e ) {
                 System.err.println( "Filepath " +outputFileName+ " is malformed, or some of its folders don't exist, or you don't have write access." );
                 return;
             }
@@ -82,9 +77,10 @@ public class Main {
             }
 
             if(css.length>0){
-                if (!quietMode)
-                  System.out.println("Adding external css files:");
-                for(String cssLink:css){
+                if (!quietMode) {
+                    System.out.println("Adding external css files:");
+                }
+                for(final String cssLink:css){
                     System.out.println("  "+cssLink);
                 }
             }
@@ -92,10 +88,10 @@ public class Main {
               System.out.println("");
               System.out.print(".");
             }
-            SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
+            final SAXTransformerFactory tf = (SAXTransformerFactory) TransformerFactory
                     .newInstance();
 
-            TransformerHandler result = tf.newTransformerHandler();
+            final TransformerHandler result = tf.newTransformerHandler();
             // If the file path were malformed, then the following
             result.setResult(new StreamResult(outputFile));
 
@@ -113,52 +109,10 @@ public class Main {
                 newStream = new FileInputStream(args[1]);
             }
 
-            XslFilter filter = new XslFilter();
+            final XslFilter filter = new XslFilter();
 
-            if (htmlDiff) {
 
-                ContentHandler postProcess = htmlOut? filter.xsl(result,
-                        "xslfilter/htmlheader.xsl"):result;
-
-                Locale locale = Locale.getDefault();
-                String prefix = "diff";
-
-                HtmlCleaner cleaner = new HtmlCleaner();
-
-                InputSource oldSource = new InputSource(oldStream);
-                InputSource newSource = new InputSource(newStream);
-
-                DomTreeBuilder oldHandler = new DomTreeBuilder();
-                cleaner.cleanAndParse(oldSource, oldHandler);
-                System.out.print(".");
-                TextNodeComparator leftComparator = new TextNodeComparator(
-                        oldHandler, locale);
-
-                DomTreeBuilder newHandler = new DomTreeBuilder();
-                cleaner.cleanAndParse(newSource, newHandler);
-                System.out.print(".");
-                TextNodeComparator rightComparator = new TextNodeComparator(
-                        newHandler, locale);
-
-                postProcess.startDocument();
-                postProcess.startElement("", "diffreport", "diffreport",
-                        new AttributesImpl());
-                doCSS(css, postProcess);
-                postProcess.startElement("", "diff", "diff",
-                        new AttributesImpl());
-                HtmlSaxDiffOutput output = new HtmlSaxDiffOutput(postProcess,
-                        prefix);
-
-                HTMLDiffer differ = new HTMLDiffer(output);
-                differ.diff(leftComparator, rightComparator);
-                System.out.print(".");
-                postProcess.endElement("", "diff", "diff");
-                postProcess.endElement("", "diffreport", "diffreport");
-                postProcess.endDocument();
-
-            } else {
-
-                ContentHandler postProcess = htmlOut? filter.xsl(result,
+                final ContentHandler postProcess = htmlOut? filter.xsl(result,
                         "xslfilter/tagheader.xsl"):result;
                 postProcess.startDocument();
                 postProcess.startElement("", "diffreport", "diffreport",
@@ -181,7 +135,7 @@ public class Main {
                     newBuffer = new BufferedReader(newISReader);
                     DaisyDiff.diffTag(oldBuffer, newBuffer, postProcess);
 
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     e.printStackTrace();
                 } finally {
                     oldBuffer.close();
@@ -195,9 +149,8 @@ public class Main {
                 postProcess.endElement("", "diff", "diff");
                 postProcess.endElement("", "diffreport", "diffreport");
                 postProcess.endDocument();
-            }
 
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
           if (quietMode){
             System.out.println(e);
           } else {
@@ -212,28 +165,34 @@ public class Main {
           }
         } finally {
             try {
-                if(oldStream != null) oldStream.close();
-            } catch (IOException e) {
+                if(oldStream != null) {
+                    oldStream.close();
+                }
+            } catch (final IOException e) {
                 //ignore this exception
             }
             try {
-                if(newStream != null) newStream.close();
-            } catch (IOException e) {
+                if(newStream != null) {
+                    newStream.close();
+                }
+            } catch (final IOException e) {
                 //ignore this exception
             }
         }
-        if (quietMode)
-          System.out.println();
-        else
-          System.out.println("done");
+        if (quietMode) {
+            System.out.println();
+        }
+        else {
+            System.out.println("done");
+        }
 
     }
 
-    private static void doCSS(String[] css, ContentHandler handler) throws SAXException {
+    private static void doCSS(final String[] css, final ContentHandler handler) throws SAXException {
         handler.startElement("", "css", "css",
                 new AttributesImpl());
-        for(String cssLink : css){
-            AttributesImpl attr = new AttributesImpl();
+        for(final String cssLink : css){
+            final AttributesImpl attr = new AttributesImpl();
             attr.addAttribute("", "href", "href", "CDATA", cssLink);
             attr.addAttribute("", "type", "type", "CDATA", "text/css");
             attr.addAttribute("", "rel", "rel", "CDATA", "stylesheet");
