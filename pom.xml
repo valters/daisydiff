@@ -153,11 +153,6 @@
               <!-- <promoteTransitiveDependencies>false</promoteTransitiveDependencies> -->
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <shadedClassifierName>shaded</shadedClassifierName>
-              <artifactSet>
-                <includes>
-                  <include>org.eclipse.core.runtime:eclipse-core-runtime</include>
-                </includes>
-              </artifactSet>
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
@@ -168,12 +163,6 @@
                   </excludes>
                 </filter>
               </filters>
-              <relocations>
-                <relocation>
-                  <pattern>org/eclipse/core</pattern>
-                  <shadedPattern>hidden/org/eclipse/core</shadedPattern>
-                </relocation>
-              </relocations>
             </configuration>
           </execution>
         </executions>
