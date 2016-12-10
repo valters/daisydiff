@@ -15,7 +15,7 @@
  */
 package org.outerj.daisy.diff.tag;
 
-import org.eclipse.compare.rangedifferencer.IRangeComparator;
+import org.outerj.eclipse.compare.rangedifferencer.IRangeComparator;
 
 /**
  * Extens the IRangeComparator interface with functionality to recreate parts of

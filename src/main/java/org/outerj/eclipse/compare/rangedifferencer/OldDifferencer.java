@@ -8,11 +8,11 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.rangedifferencer;
+package org.outerj.eclipse.compare.rangedifferencer;
 
 import java.util.ArrayList;
 
-import org.eclipse.compare.internal.Assert;
+import org.outerj.eclipse.compare.internal.Assert;
 
 /**
  * The algorithm used is an objectified version of one described in: <it>A File

@@ -8,13 +8,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.rangedifferencer;
+package org.outerj.eclipse.compare.rangedifferencer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.compare.internal.Assert;
-import org.eclipse.compare.internal.LCSSettings;
+import org.outerj.eclipse.compare.internal.Assert;
+import org.outerj.eclipse.compare.internal.LCSSettings;
 
 /**
  * A <code>RangeDifferencer</code> finds the differences between two or three

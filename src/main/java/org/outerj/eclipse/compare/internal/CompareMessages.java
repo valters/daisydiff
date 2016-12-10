@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 35390 Three-way compare cannot select (mis-selects) )ancestor resource
  *******************************************************************************/
-package org.eclipse.compare.internal;
+package org.outerj.eclipse.compare.internal;
 
 public final class CompareMessages {
 

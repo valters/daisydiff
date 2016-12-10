@@ -18,10 +18,10 @@ package org.outerj.daisy.diff.tag;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.compare.rangedifferencer.RangeDifference;
-import org.eclipse.compare.rangedifferencer.RangeDifferencer;
 import org.outerj.daisy.diff.output.TextDiffOutput;
 import org.outerj.daisy.diff.output.TextDiffer;
+import org.outerj.eclipse.compare.rangedifferencer.RangeDifference;
+import org.outerj.eclipse.compare.rangedifferencer.RangeDifferencer;
 
 /**
  * Takes 2 AtomSplitters and computes the difference between them. Output is

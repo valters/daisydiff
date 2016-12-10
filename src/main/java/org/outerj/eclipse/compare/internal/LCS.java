@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.internal;
+package org.outerj.eclipse.compare.internal;
 
 /* Used to determine the change set responsible for each line */
 public abstract class LCS {

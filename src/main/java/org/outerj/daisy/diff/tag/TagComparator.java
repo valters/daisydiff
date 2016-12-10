@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.compare.rangedifferencer.IRangeComparator;
+import org.outerj.eclipse.compare.rangedifferencer.IRangeComparator;
 
 public class TagComparator implements IAtomSplitter {
 

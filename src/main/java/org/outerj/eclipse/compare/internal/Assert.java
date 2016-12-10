@@ -1,4 +1,4 @@
-package org.eclipse.compare.internal;
+package org.outerj.eclipse.compare.internal;
 
 public class Assert {
 

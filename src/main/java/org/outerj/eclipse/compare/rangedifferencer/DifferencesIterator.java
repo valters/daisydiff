@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.rangedifferencer;
+package org.outerj.eclipse.compare.rangedifferencer;
 
 import java.util.ArrayList;
 import java.util.List;

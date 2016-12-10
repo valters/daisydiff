@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.compare.rangedifferencer;
+package org.outerj.eclipse.compare.rangedifferencer;
 
 /**
  * For breaking an object to compare into a sequence of comparable entities.
