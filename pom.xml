@@ -87,6 +87,11 @@
             <artifactId>maven-gpg-plugin</artifactId>
           <version>1.6</version>
         </plugin>
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>1.6.7</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -193,10 +198,28 @@
             </executions>
           </plugin>
 
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <extensions>true</extensions>
+            <configuration>
+              <serverId>ossrh</serverId>
+              <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+              <autoReleaseAfterClose>false</autoReleaseAfterClose>
+            </configuration>
+          </plugin>
+
         </plugins>
       </build>
     </profile>
   </profiles>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <scm>
     <connection>scm:git:https://github.com/valters/daisydiff.git</connection>
