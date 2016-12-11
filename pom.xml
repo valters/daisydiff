@@ -6,7 +6,8 @@
   <groupId>io.github.valters</groupId>
   <artifactId>daisydiff</artifactId>
   <version>1.0.1</version>
-  <name>DaisyDiff</name>
+  <name>${project.groupId}:${project.artifactId}</name>
+
   <description>
     A Java library to compare text files.
     Forked from http://DaisyDiff.github.io
@@ -226,5 +227,15 @@
     <developerConnection>scm:git:ssh://git@github.com:valters/daisydiff.git</developerConnection>
     <url>https://github.com/valters/daisydiff</url>
   </scm>
+
+  <developers>
+      <developer>
+          <id>valters</id>
+          <name>Valters Vingolds</name>
+          <email>valters@vingolds.ch</email>
+          <organization>vingolds.ch</organization>
+          <organizationUrl>http://vingolds.ch</organizationUrl>
+      </developer>
+  </developers>
 
 </project>
