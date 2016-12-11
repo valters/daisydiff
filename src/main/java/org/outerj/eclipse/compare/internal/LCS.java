@@ -34,8 +34,6 @@ public abstract class LCS {
      * After this method is called, the longest common subsequence is available
      * by calling getResult() where result[0] is composed of entries from l1 and
      * result[1] is composed of entries from l2
-     *
-     * @param subMonitor
      */
     public void longestCommonSubsequence(final LCSSettings settings) {
         final int length1 = getLength1();

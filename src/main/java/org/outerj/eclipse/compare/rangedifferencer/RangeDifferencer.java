@@ -31,8 +31,8 @@ import org.outerj.eclipse.compare.internal.LCSSettings;
  * Alternatively, the <code>findRanges</code> methods not only return objects
  * for the differing ranges but for non-differing ranges too.
  * <p>
- * The algorithm used is an objectified version of one described in: <it>A File
- * Comparison Program,</it> by Webb Miller and Eugene W. Myers, Software
+ * The algorithm used is an objectified version of one described in: <i>A File
+ * Comparison Program,</i> by Webb Miller and Eugene W. Myers, Software
  * Practice and Experience, Vol. 15, Nov. 1985.
  *
  * @see IRangeComparator
@@ -72,8 +72,6 @@ public final class RangeDifferencer {
      * differences are returned as an array of <code>RangeDifference</code>s.
      * If no differences are detected an empty array is returned.
      *
-     * @param pm
-     *                if not <code>null</code> used to report progress
      * @param left
      *                the left range comparator
      * @param right
@@ -97,8 +95,6 @@ public final class RangeDifferencer {
      * range comparator is <code>null</code>, a two-way comparison is
      * performed.
      *
-     * @param pm
-     *                if not <code>null</code> used to report progress
      * @param ancestor
      *                the ancestor range comparator or <code>null</code>
      * @param left
@@ -199,8 +195,6 @@ public final class RangeDifferencer {
      * contrast to <code>findDifferences</code>, the result contains
      * <code>RangeDifference</code> elements for non-differing ranges too.
      *
-     * @param pm
-     *                if not <code>null</code> used to report progress
      * @param left
      *                the left range comparator
      * @param right
@@ -249,8 +243,6 @@ public final class RangeDifferencer {
      * the ancestor range comparator is <code>null</code>, a two-way
      * comparison is performed.
      *
-     * @param pm
-     *                if not <code>null</code> used to report progress
      * @param ancestor
      *                the ancestor range comparator or <code>null</code>
      * @param left
