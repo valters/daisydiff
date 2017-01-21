@@ -17,9 +17,15 @@ package org.outerj.daisy.diff;
 
 import java.io.BufferedReader;
 
+import org.outerj.daisy.diff.output.ConsolidateOutput;
+import org.outerj.daisy.diff.tag.AtomComparator;
+import org.outerj.daisy.diff.tag.AtomFormat;
+import org.outerj.daisy.diff.tag.AtomList;
 import org.outerj.daisy.diff.tag.TagComparator;
 import org.outerj.daisy.diff.tag.TagDiffer;
 import org.outerj.daisy.diff.tag.TagSaxDiffOutput;
+import org.outerj.eclipse.jgit.diff.EditList;
+import org.outerj.eclipse.jgit.diff.HistogramDiff;
 import org.xml.sax.ContentHandler;
 
 public class DaisyDiff {
@@ -45,10 +51,49 @@ public class DaisyDiff {
     public static void diffTag(final BufferedReader oldText, final BufferedReader newText,
             final ContentHandler consumer) throws Exception {
 
-        final TagComparator oldComp = new TagComparator(oldText);
-        final TagComparator newComp = new TagComparator(newText);
+        try {
+            final TagComparator oldComp = new TagComparator(oldText);
+            final TagComparator newComp = new TagComparator(newText);
 
-        diffTag( consumer, oldComp, newComp );
+            diffTag( consumer, oldComp, newComp );
+        }
+        finally {
+            oldText.close();
+            newText.close();
+        }
+    }
+
+    /**
+     * Diffs two html files word for word as source using Histogram (Patience) diff variant, outputting the result to
+     * the specified consumer.
+     */
+    public static void diffHistogram( final BufferedReader oldText, final BufferedReader newText, final ContentHandler consumer ) throws Exception {
+
+        try {
+            final AtomList oldComp = new AtomList( oldText );
+            final AtomList newComp = new AtomList( newText );
+
+            diffHistogram( consumer, oldComp, newComp );
+        }
+        finally {
+            oldText.close();
+            newText.close();
+        }
+    }
+
+    private static void diffHistogram( final ContentHandler consumer, final AtomList oldComp, final AtomList newComp ) throws Exception {
+        final ConsolidateOutput output = new ConsolidateOutput( new TagSaxDiffOutput( consumer ) );
+        final HistogramDiff differ = new HistogramDiff();
+        final EditList editList = differ.diff( AtomComparator.DEFAULT, oldComp, newComp );
+
+        if( editList.isEmpty() ) {
+            output.addClearPart( output.getOriginalText() );
+        }
+        else {
+            AtomFormat.INSTANCE.format( editList, oldComp, newComp, output );
+        }
+
+        output.flushToParent();
     }
 
     private static void diffTag( final ContentHandler consumer, final TagComparator oldComp, final TagComparator newComp ) throws Exception {

@@ -20,17 +20,17 @@ package org.outerj.daisy.diff.tag;
  */
 public class DelimiterAtom extends TextAtom {
 
-    public DelimiterAtom(char c) {
+    public DelimiterAtom(final char c) {
         super("" + c);
     }
 
-    public static boolean isValidDelimiter(String s) {
+    public static boolean isValidDelimiter(final String s) {
         if (s.length() == 1)
             return isValidDelimiter(s.charAt(0));
         return false;
     }
 
-    public static boolean isValidDelimiter(char c) {
+    public static boolean isValidDelimiter(final char c) {
         switch (c) {
         // Basic Delimiters
         case '/':
@@ -61,6 +61,9 @@ public class DelimiterAtom extends TextAtom {
         case '+':
         case '*':
         case ':':
+            // extra extra
+        case '«':
+        case '»':
             return true;
         default:
             return false;
@@ -68,11 +71,11 @@ public class DelimiterAtom extends TextAtom {
     }
 
     @Override
-    public boolean isValidAtom(String s) {
+    public boolean isValidAtom(final String s) {
         return super.isValidAtom(s) && isValidDelimiterAtom(s);
     }
 
-    private boolean isValidDelimiterAtom(String s) {
+    private boolean isValidDelimiterAtom(final String s) {
         return isValidDelimiter(s);
     }
 
@@ -84,7 +87,7 @@ public class DelimiterAtom extends TextAtom {
     }
 
     @Override
-    public boolean equalsIdentifier(Atom a) {
+    public boolean equalsIdentifier(final Atom a) {
         return super.equalsIdentifier(a)
         // Handling for automatically inserted newlines
                 || ((a.getIdentifier().equals(" ") || a.getIdentifier().equals(

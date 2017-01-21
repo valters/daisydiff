@@ -30,7 +30,7 @@ public class LCSSettings {
     }
 
     // the value of N*M when to start binding the run time
-    public void setTooLong(double too_long) {
+    public void setTooLong(final double too_long) {
         this.tooLong = too_long;
     }
 
@@ -38,7 +38,7 @@ public class LCSSettings {
         return powLimit;
     }
 
-    public void setPowLimit(double pow_limit) {
+    public void setPowLimit(final double pow_limit) {
         this.powLimit = pow_limit;
     }
 
@@ -46,7 +46,7 @@ public class LCSSettings {
         return useGreedyMethod;
     }
 
-    public void setUseGreedyMethod(boolean useGreedyMethod) {
+    public void setUseGreedyMethod(final boolean useGreedyMethod) {
         this.useGreedyMethod = useGreedyMethod;
     }
 

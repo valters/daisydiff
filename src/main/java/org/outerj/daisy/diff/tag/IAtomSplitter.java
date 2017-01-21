@@ -18,7 +18,7 @@ package org.outerj.daisy.diff.tag;
 import org.outerj.eclipse.compare.rangedifferencer.IRangeComparator;
 
 /**
- * Extens the IRangeComparator interface with functionality to recreate parts of
+ * Extends the IRangeComparator interface with functionality to recreate parts of
  * the original document.
  */
 public interface IAtomSplitter extends IRangeComparator {
