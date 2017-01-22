@@ -116,4 +116,14 @@ public class TagSaxDiffOutput implements TextDiffOutput{
         addBasicText(text);
         consumer.endElement("", "span", "span");
     }
+
+    @Override
+    public void newline() {
+        try {
+            addBasicText( "\n" );
+        }
+        catch( final Exception e ) {
+            ; // ignore
+        }
+    }
 }

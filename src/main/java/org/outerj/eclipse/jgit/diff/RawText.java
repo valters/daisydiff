@@ -167,6 +167,18 @@ public class RawText extends Sequence {
 		return getString(i, i + 1, true);
 	}
 
+    /**
+     * Get the text for a single line with newline
+     *
+     * @param i
+     *            index of the line to extract. Note this is 0-based, so line
+     *            number 1 is actually index 0.
+     * @return the text for the line, with trailing NL.
+     */
+    public String getStringN(final int i) {
+        return getString(i, i + 1, false);
+    }
+
 	/**
 	 * Get the text for a region of lines.
 	 *

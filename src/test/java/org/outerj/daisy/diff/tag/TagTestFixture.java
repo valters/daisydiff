@@ -269,6 +269,11 @@ public class TagTestFixture {
 
 		}
 
+        @Override
+        public void newline() {
+            currOperation.consolidate( "\n" );
+        }
+
 	}
 
 

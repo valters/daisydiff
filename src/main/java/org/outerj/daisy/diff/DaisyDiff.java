@@ -16,6 +16,7 @@
 package org.outerj.daisy.diff;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 
 import org.outerj.daisy.diff.output.ConsolidateOutput;
 import org.outerj.daisy.diff.tag.AtomComparator;
@@ -26,9 +27,15 @@ import org.outerj.daisy.diff.tag.TagDiffer;
 import org.outerj.daisy.diff.tag.TagSaxDiffOutput;
 import org.outerj.eclipse.jgit.diff.EditList;
 import org.outerj.eclipse.jgit.diff.HistogramDiff;
+import org.outerj.eclipse.jgit.diff.HistogramFormat;
+import org.outerj.eclipse.jgit.diff.RawText;
+import org.outerj.eclipse.jgit.diff.RawTextComparator;
+import org.outerj.eclipse.jgit.util.IO;
 import org.xml.sax.ContentHandler;
 
 public class DaisyDiff {
+
+    private static final int LAW_SIZE = 10 * 1024; // use 640kb buffer
 
     /**
      * Diffs two html files word for word as source, outputting the result to
@@ -61,6 +68,12 @@ public class DaisyDiff {
             oldText.close();
             newText.close();
         }
+    }
+
+    private static void diffTag( final ContentHandler consumer, final TagComparator oldComp, final TagComparator newComp ) throws Exception {
+        final TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
+        final TagDiffer differ = new TagDiffer(output);
+        differ.diff(oldComp, newComp);
     }
 
     /**
@@ -96,10 +109,35 @@ public class DaisyDiff {
         output.flushToParent();
     }
 
-    private static void diffTag( final ContentHandler consumer, final TagComparator oldComp, final TagComparator newComp ) throws Exception {
-        final TagSaxDiffOutput output = new TagSaxDiffOutput(consumer);
-        final TagDiffer differ = new TagDiffer(output);
-        differ.diff(oldComp, newComp);
+    /**
+     * Diffs two html files word for word as source using Histogram (Patience) diff variant, outputting the result to
+     * the specified consumer.
+     */
+    public static void diffHistogramRaw( final InputStream oldText, final InputStream newText, final ContentHandler consumer ) throws Exception {
+
+        try {
+            final RawText oldComp = new RawText( IO.readWholeStream( oldText, LAW_SIZE ).array() );
+            final RawText newComp = new RawText( IO.readWholeStream( newText, LAW_SIZE ).array() );
+
+            diffHistogramRaw( consumer, oldComp, newComp );
+        }
+        finally {
+            oldText.close();
+            newText.close();
+        }
+    }
+
+    private static void diffHistogramRaw( final ContentHandler consumer, final RawText oldComp, final RawText newComp ) throws Exception {
+        final TagSaxDiffOutput output = new TagSaxDiffOutput( consumer );
+        final HistogramDiff differ = new HistogramDiff();
+        final EditList editList = differ.diff( RawTextComparator.WS_IGNORE_ALL, oldComp, newComp );
+
+        if( editList.isEmpty() ) {
+            output.addClearPart( oldComp.getString( 1 ) );
+        }
+        else {
+            HistogramFormat.INSTANCE.format( editList, oldComp, newComp, output );
+        }
     }
 
 }

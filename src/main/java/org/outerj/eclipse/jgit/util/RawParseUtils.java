@@ -391,6 +391,19 @@ public final class RawParseUtils {
 		return ptr;
 	}
 
+    public static final int nextDelimiter(final byte[] b, int ptr) {
+        final char chrA = '.';
+        final char chrB = ',';
+
+        final int sz = b.length;
+        while (ptr < sz) {
+            final byte c = b[ptr++];
+            if (c == chrA || c == chrB || c == '\n')
+                return ptr;
+        }
+        return ptr;
+    }
+
 	/**
 	 * Locate the first position before a given character.
 	 *
@@ -479,9 +492,9 @@ public final class RawParseUtils {
 		// the average number of bytes/line is 36. Its a rough guess
 		// to initially size our map close to the target.
 		//
-		final IntList map = new IntList((end - ptr) / 36);
+		final IntList map = new IntList((end - ptr) / 10);
 		map.fillTo(1, Integer.MIN_VALUE);
-		for (; ptr < end; ptr = nextLF(buf, ptr))
+		for (; ptr < end; ptr = nextDelimiter(buf, ptr))
 			map.add(ptr);
 		map.add(end);
 		return map;

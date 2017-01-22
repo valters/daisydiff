@@ -11,42 +11,42 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 */
-package org.outerj.daisy.diff.tag;
+
+package org.outerj.eclipse.jgit.diff;
 
 import java.util.List;
 
 import org.outerj.daisy.diff.output.TextDiffOutput;
-import org.outerj.eclipse.jgit.diff.Edit;
-import org.outerj.eclipse.jgit.diff.EditList;
 
-public class AtomFormat {
-    public static final AtomFormat INSTANCE = new AtomFormat();
+/** jgit diff output */
+public class HistogramFormat {
+    public static final HistogramFormat INSTANCE = new HistogramFormat();
 
-    /** jgit diff output */
-    public void format(final EditList edits, final AtomList a, final AtomList b, final TextDiffOutput output) throws Exception {
+    public void format(final EditList edits, final RawText a, final RawText b, final TextDiffOutput output) throws Exception {
 
         for (int curIdx = 0; curIdx < edits.size();) {
             Edit curEdit = edits.get(curIdx);
             final int endIdx = findCombinedEnd(edits, curIdx);
-            final Edit endEdit = edits.get(endIdx);
 
-            int aCur = 0; //(int) Math.max(0, (long) curEdit.getBeginA() - context);
-            int bCur = 0; //(int) Math.max(0, (long) curEdit.getBeginB() - context);
-            final int aEnd = a.size() ; //(int) Math.min(a.size(), (long) endEdit.getEndA() + context);
-            final int bEnd = b.size(); //(int) Math.min(b.size(), (long) endEdit.getEndB() + context);
+            int aCur = 0;
+            int bCur = 0;
+            final int aEnd = a.size();
+            final int bEnd = b.size();
 
             while (aCur < aEnd || bCur < bEnd) {
                 if (aCur < curEdit.getBeginA() || endIdx + 1 < curIdx) {
-                    if( aCur < aEnd ) {
-                        output.addClearPart( a.getAtom( aCur ).getFullText() );
+                    if( aCur < aEnd) {
+                        output.addClearPart( a.getStringN( aCur ) );
                     }
                     aCur++;
                     bCur++;
                 } else if (aCur < curEdit.getEndA()) {
-                    output.addRemovedPart( a.getAtom( aCur ).getFullText() );
+                    if( aCur < aEnd) {
+                        output.addRemovedPart( a.getStringN( aCur ) );
+                    }
                     aCur++;
                 } else if (bCur < curEdit.getEndB()) {
-                    output.addAddedPart( b.getAtom( bCur ).getFullText() );
+                    output.addAddedPart( b.getStringN( bCur ) );
                     bCur++;
                 }
 
@@ -66,7 +66,7 @@ public class AtomFormat {
         return end - 1;
     }
 
-    private final int context = 3000000;
+    private final int context = 1000;
 
     private boolean combineA(final List<Edit> e, final int i) {
         return e.get(i).getBeginA() - e.get(i - 1).getEndA() <= 2 * context;

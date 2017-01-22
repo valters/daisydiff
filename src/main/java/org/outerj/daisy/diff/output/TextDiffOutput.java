@@ -19,10 +19,10 @@ import org.outerj.daisy.diff.tag.TagSaxDiffOutput;
 
 
 /**
- * 
+ *
  * Interface for classes that need to process the result from the tag-like
  * represenation of the output.
- * 
+ *
  * @author kapelonk
  * @see TagSaxDiffOutput
  *
@@ -35,7 +35,7 @@ public interface TextDiffOutput {
 	 * @throws Exception something went wrong.
 	 */
 	void addClearPart(String text) throws Exception;
-	
+
 	/**
 	 * Handles a deletion.
 	 * @param text string that was removed.
@@ -49,4 +49,7 @@ public interface TextDiffOutput {
 	 * @throws Exception something went wrong.
 	 */
 	void addAddedPart(String text) throws Exception;
+
+	/** output a new line break */
+    void newline();
 }
