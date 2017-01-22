@@ -9,5 +9,4 @@ The Apache Software Foundation (http://www.apache.org/).
 
 This product includes materials that are made available
 under the terms of the Eclipse Distribution License v1.0 which
-accompanies this distribution, and is
-available at http://www.eclipse.org/org/documents/edl-v10.php
+is available at http://www.eclipse.org/org/documents/edl-v10.php
