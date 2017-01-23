@@ -88,9 +88,19 @@ public class RawText extends Sequence {
 	 *            through cached arrays is safe.
 	 */
 	public RawText(final byte[] input) {
-		content = input;
-		lines = RawParseUtils.lineMap(content, 0, content.length);
+	    this( input, RawParseUtils.MAP_LINES );
 	}
+
+    /**
+     * Create a new sequence from an existing content byte array.
+     *
+	 * @param input see {@link #RawText(byte[])}
+	 * @param tokenize provide tokenization method to use (default behavior is to map lines).
+	 */
+    public RawText(final byte[] input, final RawTextTokenizer tokenize) {
+        content = input;
+        lines = tokenize.tokenMap( content, 0, content.length );
+    }
 
 	/**
 	 * Create a new sequence from a file.

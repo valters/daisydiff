@@ -56,6 +56,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.outerj.eclipse.jgit.diff.RawTextTokenizer;
+
 
 /** Handy utility functions to parse raw object contents. */
 public final class RawParseUtils {
@@ -391,7 +393,7 @@ public final class RawParseUtils {
 		return ptr;
 	}
 
-    public static final int nextDelimiter(final byte[] b, int ptr) {
+    public static final int nextSentenceDelimiter(final byte[] b, int ptr) {
         final char chrA = '.';
         final char chrB = ',';
 
@@ -492,13 +494,40 @@ public final class RawParseUtils {
 		// the average number of bytes/line is 36. Its a rough guess
 		// to initially size our map close to the target.
 		//
-		final IntList map = new IntList((end - ptr) / 10);
+		final IntList map = new IntList((end - ptr) / 36);
 		map.fillTo(1, Integer.MIN_VALUE);
-		for (; ptr < end; ptr = nextDelimiter(buf, ptr))
+		for (; ptr < end; ptr = nextLF(buf, ptr))
 			map.add(ptr);
 		map.add(end);
 		return map;
 	}
+
+    public static final IntList sentenceMap(final byte[] buf, int ptr, final int end) {
+        final IntList map = new IntList((end - ptr) / 10);
+        map.fillTo(1, Integer.MIN_VALUE);
+        for (; ptr < end; ptr = nextSentenceDelimiter(buf, ptr))
+            map.add(ptr);
+        map.add(end);
+        return map;
+    }
+
+    /** maps lines by finding line end characters */
+	public static final RawTextTokenizer MAP_LINES = new RawTextTokenizer() {
+
+        @Override
+        public IntList tokenMap( final byte[] buf, final int ptr, final int end ) {
+            return lineMap( buf, ptr, end );
+        }
+    };
+
+    /** maps lines and also sentences, but finding sentence delimiters in addition to line end characters */
+    public static final RawTextTokenizer MAP_SENTENCES = new RawTextTokenizer() {
+
+        @Override
+        public IntList tokenMap( final byte[] buf, final int ptr, final int end ) {
+            return sentenceMap( buf, ptr, end );
+        }
+    };
 
 	/**
 	 * Locate the end of a footer line key string.

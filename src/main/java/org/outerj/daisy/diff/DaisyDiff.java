@@ -31,6 +31,7 @@ import org.outerj.eclipse.jgit.diff.HistogramFormat;
 import org.outerj.eclipse.jgit.diff.RawText;
 import org.outerj.eclipse.jgit.diff.RawTextComparator;
 import org.outerj.eclipse.jgit.util.IO;
+import org.outerj.eclipse.jgit.util.RawParseUtils;
 import org.xml.sax.ContentHandler;
 
 public class DaisyDiff {
@@ -116,8 +117,8 @@ public class DaisyDiff {
     public static void diffHistogramRaw( final InputStream oldText, final InputStream newText, final ContentHandler consumer ) throws Exception {
 
         try {
-            final RawText oldComp = new RawText( IO.readWholeStream( oldText, LAW_SIZE ).array() );
-            final RawText newComp = new RawText( IO.readWholeStream( newText, LAW_SIZE ).array() );
+            final RawText oldComp = new RawText( IO.readWholeStream( oldText, LAW_SIZE ).array(), RawParseUtils.MAP_SENTENCES );
+            final RawText newComp = new RawText( IO.readWholeStream( newText, LAW_SIZE ).array(), RawParseUtils.MAP_SENTENCES );
 
             diffHistogramRaw( consumer, oldComp, newComp );
         }
