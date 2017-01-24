@@ -74,7 +74,7 @@ public class TagTestFixture {
 
 	}
 
-    public void performHistogramDiff(final String original, final String modified) throws Exception
+    public void performHistogramAtomDiff(final String original, final String modified) throws Exception
     {
         oldText = original;
         newText = modified;

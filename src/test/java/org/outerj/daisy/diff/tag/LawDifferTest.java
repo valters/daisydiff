@@ -84,7 +84,7 @@ public class LawDifferTest {
         System.out.println( "====================== histogram ==================" );
 
         final TagTestFixture tagTest2 = new TagTestFixture();
-        tagTest2.performHistogramDiff(original, modified);
+        tagTest2.performHistogramAtomDiff(original, modified);
         final List<TextOperation> res2 = tagTest2.getResults();
         System.out.println( res2.size() );
         System.out.println( res2 );
