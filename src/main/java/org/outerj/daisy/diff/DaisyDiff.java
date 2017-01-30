@@ -134,7 +134,7 @@ public class DaisyDiff {
         final EditList editList = differ.diff( RawTextComparator.WS_IGNORE_ALL, oldComp, newComp );
 
         if( editList.isEmpty() ) {
-            output.addClearPart( oldComp.getString( 1 ) );
+            HistogramFormat.INSTANCE.noChanges( newComp, output );
         }
         else {
             HistogramFormat.INSTANCE.format( editList, oldComp, newComp, output );

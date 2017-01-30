@@ -80,4 +80,15 @@ public class HistogramFormat {
         return edit.getEndA() <= a && edit.getEndB() <= b;
     }
 
+    /** edit list was empty: simply output the new file */
+    public void noChanges( final RawText text, final TextDiffOutput output ) throws Exception {
+
+        int aCur = 0;
+        final int aEnd = text.size();
+        while (aCur < aEnd ) {
+            output.addClearPart( text.getStringN( aCur ) );
+            aCur++;
+        }
+    }
+
 }
