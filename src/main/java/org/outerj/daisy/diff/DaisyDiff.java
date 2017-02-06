@@ -30,6 +30,7 @@ import org.outerj.eclipse.jgit.diff.HistogramDiff;
 import org.outerj.eclipse.jgit.diff.HistogramFormat;
 import org.outerj.eclipse.jgit.diff.RawText;
 import org.outerj.eclipse.jgit.diff.RawTextComparator;
+import org.outerj.eclipse.jgit.diff.RawTextTokenizer;
 import org.outerj.eclipse.jgit.util.IO;
 import org.outerj.eclipse.jgit.util.RawParseUtils;
 import org.xml.sax.ContentHandler;
@@ -110,15 +111,24 @@ public class DaisyDiff {
         output.flushToParent();
     }
 
+    /** @see #diffHistogramRaw(InputStream, InputStream, ContentHandler, RawTextTokenizer) */
+    public static void diffHistogramRaw( final InputStream oldText, final InputStream newText, final ContentHandler consumer ) throws Exception {
+        diffHistogramRaw( oldText, newText, consumer, RawParseUtils.MAP_SENTENCES );
+    }
+
     /**
      * Diffs two html files word for word as source using Histogram (Patience) diff variant, outputting the result to
      * the specified consumer.
+     * @param oldText compare original text
+     * @param newText with new (modified) text
+     * @param consumer output html report to
+     * @param tokenizer using given algorithm to detect tokens (default is conservative "sentences")
      */
-    public static void diffHistogramRaw( final InputStream oldText, final InputStream newText, final ContentHandler consumer ) throws Exception {
+    public static void diffHistogramRaw( final InputStream oldText, final InputStream newText, final ContentHandler consumer, final RawTextTokenizer tokenizer ) throws Exception {
 
         try {
-            final RawText oldComp = new RawText( IO.readWholeStream( oldText, LAW_SIZE ).array(), RawParseUtils.MAP_SENTENCES );
-            final RawText newComp = new RawText( IO.readWholeStream( newText, LAW_SIZE ).array(), RawParseUtils.MAP_SENTENCES );
+            final RawText oldComp = new RawText( IO.readWholeStream( oldText, LAW_SIZE ).array(), tokenizer );
+            final RawText newComp = new RawText( IO.readWholeStream( newText, LAW_SIZE ).array(), tokenizer );
 
             diffHistogramRaw( consumer, oldComp, newComp );
         }

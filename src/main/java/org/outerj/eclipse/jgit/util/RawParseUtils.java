@@ -505,8 +505,9 @@ public final class RawParseUtils {
     public static final IntList sentenceMap(final byte[] buf, int ptr, final int end) {
         final IntList map = new IntList((end - ptr) / 10);
         map.fillTo(1, Integer.MIN_VALUE);
-        for (; ptr < end; ptr = nextSentenceDelimiter(buf, ptr))
+        for (; ptr < end; ptr = nextSentenceDelimiter(buf, ptr)) {
             map.add(ptr);
+        }
         map.add(end);
         return map;
     }
