@@ -15,6 +15,11 @@
  */
 package org.outerj.daisy.diff.tag;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+
+import org.outerj.daisy.diff.output.OperationType;
 import org.outerj.daisy.diff.output.TextDiffOutput;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -27,23 +32,47 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class TagSaxDiffOutput implements TextDiffOutput{
 
+    private static final String OP_REMOVED = "removed";
+    private static final String OP_ADDED = "added";
+    private static final String prefix = "change";
+
     private final ContentHandler consumer;
+
+    protected final List<TextOperation> results = new LinkedList<>();
+
+    protected static class TextOperation
+    {
+        @Override
+        public String toString() {
+            return "[" + type + ": '" + text + "']";
+        }
+
+        protected final String text;
+        protected final OperationType type;
+        protected final int id;
+
+        public TextOperation( final String text, final OperationType type, final int id ) {
+            super();
+            this.text = text;
+            this.type = type;
+            this.id = id;
+        }
+
+        protected TextOperation prev = null;
+        protected TextOperation next = null;
+    }
 
     public TagSaxDiffOutput(final ContentHandler consumer) {
         this.consumer = consumer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addClearPart(final String text) throws Exception {
-        addBasicText(text);
+    private void outClearPart(final TextOperation op ) throws Exception {
+        outBasicText(op.text);
     }
 
     private boolean insideTag = false;
 
-    private void addBasicText(final String text) throws SAXException {
+    private void outBasicText(final String text) throws SAXException {
         final char[] c = text.toCharArray();
 
         final AttributesImpl noattrs = new AttributesImpl();
@@ -89,41 +118,152 @@ public class TagSaxDiffOutput implements TextDiffOutput{
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void addRemovedPart(final String text) throws Exception {
-        final AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-removed");
-        attrs.addAttribute("", "id", "id", "CDATA", "removed" + removedID);
-        attrs.addAttribute("", "title", "title", "CDATA", "#removed"
-                + removedID);
+    private void outRemovedPart(final TextOperation op, final TextOperation next, final TextOperation prev ) throws Exception {
+        final AttributesImpl attrs = attrs( op, next, prev );
         removedID++;
         consumer.startElement("", "span", "span", attrs);
-        addBasicText(text);
+        outBasicText(op.text);
         consumer.endElement("", "span", "span");
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    private AttributesImpl attrs( final TextOperation op, final TextOperation next, final TextOperation prev) {
+        final String opType = opType( op.type );
+        final AttributesImpl attrs = new AttributesImpl();
+        attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-"+opType);
+        attrs.addAttribute("", "id", "id", "CDATA", opType + op.id);
+        attrs.addAttribute("", "title", "title", "CDATA", "#"+opType + op.id);
+
+        attrs.addAttribute("", "change-id", "change-id", "CDATA", changeId( op ) );
+        attrs.addAttribute("", "previous", "previous", "CDATA", previous( prev ) );
+        attrs.addAttribute("", "next", "next", "CDATA", next( next ) );
+
+        return attrs;
+    }
+
+    private String changeId( final TextOperation prev ) {
+        return opType(prev.type) + "-" + prefix + "-" + prev.id;
+    }
+
+    private String next( final TextOperation next ) {
+        if( next == null ) {
+            return "last-change";
+        }
+        return elementId( next );
+    }
+
+    private String previous( final TextOperation prev ) {
+        if( prev == null ) {
+            return "first-change";
+        }
+
+        return elementId( prev );
+    }
+
+    private String elementId( final TextOperation prev ) {
+        return opType(prev.type) + prev.id;
+    }
+
+    private final String opType( final OperationType t ) {
+        return t == OperationType.ADD_TEXT ? OP_ADDED : OP_REMOVED;
+    }
+
+    private void outAddedPart(final TextOperation op, final TextOperation next, final TextOperation prev ) throws Exception {
+        final AttributesImpl attrs = attrs( op, next, prev );
+        consumer.startElement("", "span", "span", attrs);
+        outBasicText(op.text);
+        consumer.endElement("", "span", "span");
+    }
+
     @Override
     public void addAddedPart(final String text) throws Exception {
-        final AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "class", "class", "CDATA", "diff-tag-added");
-        attrs.addAttribute("", "id", "id", "CDATA", "added" + addedID);
-        attrs.addAttribute("", "title", "title", "CDATA", "#added" + addedID);
+        results.add( new TextOperation( text, OperationType.ADD_TEXT, addedID ) );
         addedID++;
-        consumer.startElement("", "span", "span", attrs);
-        addBasicText(text);
-        consumer.endElement("", "span", "span");
+    }
+
+    @Override
+    public void addClearPart(final String text) throws Exception {
+        results.add( new TextOperation( text, OperationType.NO_CHANGE, -1 ) );
+    }
+
+    @Override
+    public void addRemovedPart(final String text) throws Exception {
+        results.add( new TextOperation( text, OperationType.REMOVE_TEXT, removedID ) );
+        removedID++;
     }
 
     @Override
     public void newline() {
         try {
-            addBasicText( "\n" );
+            addClearPart( "\n" );
         }
         catch( final Exception e ) {
-            ; // ignore
+            // ignore
+        }
+    }
+
+    @Override
+    public void flush() throws Exception {
+
+        linkOperations();
+        flushOut();
+    }
+
+    protected void flushOut() throws Exception {
+        for( final TextOperation op : results ) {
+            doOp( op );
+        }
+    }
+
+    protected void linkOperations() {
+        final ListIterator<TextOperation> it = results.listIterator();
+        if( ! it.hasNext() ) {
+            return; // not even a single element?
+        }
+
+        while( it.hasNext() ) {
+            final TextOperation op = it.next();
+
+            if( op.type != OperationType.NO_CHANGE ) {
+                op.prev = findPrev( results.listIterator( it.previousIndex() ) );
+                if( it.hasNext() ) {
+                    op.next = findNext( results.listIterator( it.nextIndex() ) );
+                }
+            }
+        }
+    }
+
+    private TextOperation findNext( final ListIterator<TextOperation> it ) {
+        while( it.hasNext() ) {
+            final TextOperation op = it.next();
+            if( op.type != OperationType.NO_CHANGE ) {
+                return op;
+            }
+        }
+        return null;
+    }
+
+    private TextOperation findPrev( final ListIterator<TextOperation> it ) {
+        while( it.hasPrevious() ) {
+            final TextOperation op = it.previous();
+            if( op.type != OperationType.NO_CHANGE ) {
+                return op;
+            }
+        }
+        return null;
+    }
+
+    protected void doOp( final TextOperation op ) throws Exception {
+        if( op.type == OperationType.ADD_TEXT ) {
+            outAddedPart( op, op.next, op.prev );
+        }
+        else if( op.type == OperationType.REMOVE_TEXT ) {
+            outRemovedPart( op, op.next, op.prev );
+        }
+        else if( op.type == OperationType.NO_CHANGE ) {
+            outClearPart( op );
+        }
+        else {
+            throw new RuntimeException( "Unrecognized operation type: " + op.type );
         }
     }
 }

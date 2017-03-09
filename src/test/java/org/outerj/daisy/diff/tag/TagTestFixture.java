@@ -274,6 +274,10 @@ public class TagTestFixture {
             currOperation.consolidate( "\n" );
         }
 
+        @Override
+        public void flush() throws Exception {
+        }
+
 	}
 
 

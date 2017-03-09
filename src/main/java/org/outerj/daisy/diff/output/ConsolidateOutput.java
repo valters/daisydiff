@@ -18,11 +18,6 @@ import java.util.List;
 
 public class ConsolidateOutput implements TextDiffOutput
 {
-    /** Type of changes as produced by the diff process */
-    private static enum OperationType {
-        NO_CHANGE, ADD_TEXT, REMOVE_TEXT
-    }
-
     private static class TextOperation
     {
         @Override
@@ -55,7 +50,7 @@ public class ConsolidateOutput implements TextDiffOutput
         public String getText() {
             if( text == null ) {
                 if( buffer != null ) {
-                    text  = buffer.toString();
+                    text = buffer.toString();
                     buffer = null;
                 }
             }
@@ -141,7 +136,8 @@ public class ConsolidateOutput implements TextDiffOutput
 	}
 
 	/** send changes to parent output */
-	public void flushToParent() throws Exception {
+	@Override
+    public void flush() throws Exception {
         for( final TextOperation op : results ) {
             switch( op.getType() ) {
                 case NO_CHANGE:
@@ -155,6 +151,8 @@ public class ConsolidateOutput implements TextDiffOutput
                     break;
             }
         }
+
+        parent.flush();
     }
 
     public String getOriginalText() {

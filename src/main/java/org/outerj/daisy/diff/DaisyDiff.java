@@ -108,7 +108,7 @@ public class DaisyDiff {
             AtomFormat.INSTANCE.format( editList, oldComp, newComp, output );
         }
 
-        output.flushToParent();
+        output.flush();
     }
 
     /** @see #diffHistogramRaw(InputStream, InputStream, ContentHandler, RawTextTokenizer) */
@@ -139,16 +139,18 @@ public class DaisyDiff {
     }
 
     private static void diffHistogramRaw( final ContentHandler consumer, final RawText oldComp, final RawText newComp ) throws Exception {
-        final TagSaxDiffOutput output = new TagSaxDiffOutput( consumer );
         final HistogramDiff differ = new HistogramDiff();
         final EditList editList = differ.diff( RawTextComparator.WS_IGNORE_ALL, oldComp, newComp );
 
+        final ConsolidateOutput output = new ConsolidateOutput( new TagSaxDiffOutput( consumer ) );
         if( editList.isEmpty() ) {
             HistogramFormat.INSTANCE.noChanges( newComp, output );
         }
         else {
             HistogramFormat.INSTANCE.format( editList, oldComp, newComp, output );
         }
+
+        output.flush();
     }
 
 }

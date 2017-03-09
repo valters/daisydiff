@@ -5,7 +5,7 @@
 
   <groupId>io.github.valters</groupId>
   <artifactId>daisydiff</artifactId>
-  <version>1.1.1</version>
+  <version>1.2.0</version>
   <name>${project.groupId}:${project.artifactId}</name>
 
   <description>
@@ -36,6 +36,11 @@
         <artifactId>junit</artifactId>
         <version>4.12</version>
       </dependency>
+      <dependency>
+          <groupId>org.mockito</groupId>
+          <artifactId>mockito-core</artifactId>
+          <version>2.7.14</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -46,6 +51,11 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <scope>test</scope>
     </dependency>
 
   </dependencies>

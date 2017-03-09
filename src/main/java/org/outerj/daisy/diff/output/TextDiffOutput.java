@@ -52,4 +52,7 @@ public interface TextDiffOutput {
 
 	/** output a new line break */
     void newline();
+
+    /** if handler has been buffering output, send the accumulated changes up the chain */
+    void flush() throws Exception;
 }
